@@ -1,3 +1,3 @@
-require './test_runner'
-init(ENV["EXTENSION"])
-run
+require_relative "test_runner"
+folder = ENV["FOLDER"]
+run(folder)
