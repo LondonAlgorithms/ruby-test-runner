@@ -1,23 +1,24 @@
 require "rspec/autorun"
 require "rspec"
-require "./spec/spec_helper.rb"
+require_relative "spec_helper"
 require "json"
 
-  def init(extension)
-    @extension = extension
-    require_file
-  end
 
-  def run
+  def run(folder)
+
     describe "Pathfinder" do
-      f = open("challenge_#{extension}.json").read
+      require_file(folder)
+
+      path = File.expand_path("../../builds/#{folder}/challenge.json", __FILE__)
+      f = open(path).read
       json = JSON.parse(f)
       challenges = json["challenges"]
 
       outputs = []
       after(:all) do
         process_outputs(outputs)
-        File.write("output" + "_#{extension}.json", outputs.to_json.to_s)
+        path = File.expand_path("../../builds/#{folder}/output.json", __FILE__)
+        File.write(path, outputs.to_json.to_s)
       end
 
       challenges.each_with_index do |challenge, index|
@@ -27,7 +28,6 @@ require "json"
   end
 
   private
-  attr_reader :extension
 
   def process_outputs(outputs)
     outputs.each do |challenge|
@@ -36,8 +36,9 @@ require "json"
       end
     end
   end
-  def require_file
-    require("./algo_#{extension}")
+  def require_file(folder)
+    path = File.expand_path("../../builds/#{folder}/algo", __FILE__)
+    require(path)
   end
 
   def run_challenge(challenge, pb_index)
